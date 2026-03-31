@@ -95,76 +95,109 @@ def collect(username: str, output_dir: str, msg_limit: int = 1000, channel_limit
 
     print(f"Found: {target_name} ({target_uid})")
 
-    # Get channels
+    # Get channels with pagination
+    all_channels = []
     try:
-        channels_response = client.conversations_list(types="public_channel,private_channel", limit=200)
-        channels = channels_response["channels"]
+        cursor = None
+        while True:
+            params = {"types": "public_channel,private_channel", "limit": 200}
+            if cursor:
+                params["cursor"] = cursor
+            channels_response = client.conversations_list(**params)
+            all_channels.extend(channels_response["channels"])
+            cursor = channels_response.get("response_metadata", {}).get("next_cursor")
+            if not cursor:
+                break
     except SlackApiError as e:
         print(f"❌ Failed to list channels: {e.response['error']}")
         sys.exit(1)
+
+    channels = all_channels
 
     # Collect messages from each channel
     all_messages = []
     all_threads = []
     channels_processed = 0
+    rate_limit_wait = 1  # seconds, increases on 429
 
     for channel in channels[:channel_limit]:
         channel_name = channel.get("name", channel["id"])
         try:
-            history = client.conversations_history(
-                channel=channel["id"],
-                limit=200,
-            )
+            cursor = None
+            while len(all_messages) < msg_limit:
+                params = {"channel": channel["id"], "limit": 200}
+                if cursor:
+                    params["cursor"] = cursor
+                try:
+                    history = client.conversations_history(**params)
+                except SlackApiError as e:
+                    if e.response.get("error") == "ratelimited":
+                        retry_after = int(e.response.headers.get("Retry-After", rate_limit_wait))
+                        print(f"   ⏳ Rate limited, waiting {retry_after}s...")
+                        import time
+                        time.sleep(retry_after)
+                        rate_limit_wait = min(rate_limit_wait * 2, 60)
+                        continue
+                    raise
+
+                for msg in history.get("messages", []):
+                    if msg.get("user") != target_uid:
+                        continue
+                    if msg.get("subtype") in ("channel_join", "channel_leave", "bot_message"):
+                        continue
+
+                    text = msg.get("text", "").strip()
+                    if not text:
+                        continue
+
+                    ts = msg.get("ts", "0")
+                    try:
+                        dt = datetime.fromtimestamp(float(ts), tz=timezone.utc)
+                        timestamp = dt.strftime("%Y-%m-%d %H:%M")
+                    except (ValueError, OSError):
+                        timestamp = "unknown"
+
+                    all_messages.append({
+                        "channel": channel_name,
+                        "timestamp": timestamp,
+                        "text": text,
+                    })
+
+                    # Collect thread replies if this is a thread parent
+                    if msg.get("reply_count", 0) > 0:
+                        try:
+                            thread_response = client.conversations_replies(
+                                channel=channel["id"],
+                                ts=msg["ts"],
+                                limit=50,
+                            )
+                            for reply in thread_response.get("messages", [])[1:]:  # skip parent
+                                if reply.get("user") == target_uid:
+                                    reply_text = reply.get("text", "").strip()
+                                    if reply_text:
+                                        all_threads.append({
+                                            "channel": channel_name,
+                                            "timestamp": timestamp,
+                                            "text": reply_text,
+                                            "parent_text": text[:100],
+                                        })
+                        except SlackApiError:
+                            pass
+
+                    if len(all_messages) >= msg_limit:
+                        break
+
+                cursor = history.get("response_metadata", {}).get("next_cursor")
+                if not cursor or len(all_messages) >= msg_limit:
+                    break
+
         except SlackApiError:
             continue
 
         channels_processed += 1
-        for msg in history.get("messages", []):
-            if msg.get("user") != target_uid:
-                continue
-            if msg.get("subtype") in ("channel_join", "channel_leave", "bot_message"):
-                continue
-
-            text = msg.get("text", "").strip()
-            if not text:
-                continue
-
-            ts = msg.get("ts", "0")
-            try:
-                dt = datetime.fromtimestamp(float(ts), tz=timezone.utc)
-                timestamp = dt.strftime("%Y-%m-%d %H:%M")
-            except (ValueError, OSError):
-                timestamp = "unknown"
-
-            all_messages.append({
-                "channel": channel_name,
-                "timestamp": timestamp,
-                "text": text,
-            })
-
-            # Collect thread replies if this is a thread parent
-            if msg.get("reply_count", 0) > 0:
-                try:
-                    thread_response = client.conversations_replies(
-                        channel=channel["id"],
-                        ts=msg["ts"],
-                        limit=50,
-                    )
-                    for reply in thread_response.get("messages", [])[1:]:  # skip parent
-                        if reply.get("user") == target_uid:
-                            reply_text = reply.get("text", "").strip()
-                            if reply_text:
-                                all_threads.append({
-                                    "channel": channel_name,
-                                    "timestamp": timestamp,
-                                    "text": reply_text,
-                                    "parent_text": text[:100],
-                                })
-                except SlackApiError:
-                    pass
-
-            if len(all_messages) >= msg_limit:
-                break
+        # Progress indicator
+        if channels_processed % 5 == 0:
+            print(f"   Processed {channels_processed}/{min(len(channels), channel_limit)} channels, {len(all_messages)} messages so far...")
 
         if len(all_messages) >= msg_limit:
             break

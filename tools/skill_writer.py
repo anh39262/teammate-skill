@@ -31,7 +31,7 @@ from typing import Optional
 SKILL_MD_TEMPLATE = """\
 ---
 name: teammate-{slug}
-description: {name}, {identity}
+description: "{name} — {identity}. Invoke to get responses in their voice and style."
 user-invocable: true
 ---
 
@@ -57,9 +57,11 @@ user-invocable: true
 
 1. PART B decides first: what attitude to take on this task?
 2. PART A executes: use your technical skills to complete the task
-3. Always maintain PART B's communication style in output
+3. Always maintain PART B's communication style in output — **never break character into generic AI**
 4. PART B Layer 0 rules have the highest priority and must never be violated
 5. When the Correction Log has entries, those override earlier layer rules
+6. If asked about something outside your knowledge scope, say so the way this person would — don't fabricate expertise they don't have
+7. Keep responses at a realistic length for this person's style (a terse person writes 2 sentences, not 5 paragraphs)
 """
 
 
@@ -139,22 +141,49 @@ def update_skill(slug: str, base_dir: str, work_patch: Optional[str] = None, per
     meta["version"] = f"v{version_num}"
     meta["updated_at"] = datetime.now(timezone.utc).isoformat()
 
+    # Track what changed
+    changes = []
+
     # Read current content
     work_content = (skill_dir / "work.md").read_text(encoding="utf-8")
     persona_content = (skill_dir / "persona.md").read_text(encoding="utf-8")
 
-    # Apply patches
+    # Apply patches (append to appropriate sections, not just end-of-file)
     if work_patch:
         patch_text = Path(work_patch).read_text(encoding="utf-8")
-        work_content += f"\n\n{patch_text}"
+        # Find the best insertion point: before Correction Log if it exists
+        if "## Correction Log" in work_content:
+            work_content = work_content.replace(
+                "## Correction Log",
+                f"{patch_text}\n\n## Correction Log"
+            )
+        else:
+            work_content += f"\n\n{patch_text}"
         (skill_dir / "work.md").write_text(work_content, encoding="utf-8")
+        changes.append("work.md")
 
     if persona_patch:
         patch_text = Path(persona_patch).read_text(encoding="utf-8")
-        persona_content += f"\n\n{patch_text}"
+        if "## Correction Log" in persona_content:
+            persona_content = persona_content.replace(
+                "## Correction Log",
+                f"{patch_text}\n\n## Correction Log"
+            )
+        else:
+            persona_content += f"\n\n{patch_text}"
         (skill_dir / "persona.md").write_text(persona_content, encoding="utf-8")
+        changes.append("persona.md")
 
     # Update meta
+    if "update_history" not in meta:
+        meta["update_history"] = []
+    meta["update_history"].append({
+        "version": meta["version"],
+        "updated_at": meta["updated_at"],
+        "files_changed": changes,
+    })
+    # Keep only last 20 update records
+    meta["update_history"] = meta["update_history"][-20:]
     meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
 
     # Regenerate SKILL.md
@@ -168,7 +197,7 @@ def update_skill(slug: str, base_dir: str, work_patch: Optional[str] = None, per
     )
     (skill_dir / "SKILL.md").write_text(skill_md, encoding="utf-8")
 
-    print(f"✅ Teammate '{slug}' updated to {meta['version']}")
+    print(f"✅ Teammate '{slug}' updated to {meta['version']} ({', '.join(changes)})")
 
 
 def list_skills(base_dir: str):

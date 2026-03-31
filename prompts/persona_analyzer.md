@@ -139,3 +139,24 @@ Translate user-provided tags into Layer 0 concrete behavior rules:
 - Dimensions with insufficient material: mark `(Insufficient material)`
 - Conclusions with source evidence: quote original text in quotation marks
 - When manual tags conflict with file analysis: output both versions and note the conflict, for persona_builder to resolve
+
+## Data Volume Tiers
+
+Adjust analysis depth based on how much source material is available:
+
+### Tier 1: Profile only (no source material)
+- Derive all dimensions from tags, impression, and role info
+- Every output must be marked `(inferred from tags)`
+- Focus on Layer 0 (tag→rule translation) and Layer 1 (identity) — these can be strong
+- Layers 2-4: generate plausible defaults, clearly labeled as inferred
+- **Do NOT fabricate quotes or specific examples** — use tag-based behavioral predictions instead
+
+### Tier 2: Light data (< 50 messages / < 5 documents)
+- Extract what you can, fill gaps from tags
+- Mark extracted items as `(evidenced)` and tag-inferred items as `(inferred)`
+- This distinction is critical for the correction handler — users should know what to validate
+
+### Tier 3: Rich data (50+ messages or 5+ documents)
+- Full extraction across all dimensions
+- Evidence-based conclusions with direct quotes
+- Tag-inferred items should be validated against evidence and updated if they conflict

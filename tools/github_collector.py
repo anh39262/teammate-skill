@@ -25,7 +25,7 @@ GITHUB_API = "https://api.github.com"
 
 
 def gh_request(path: str, token: Optional[str] = None, params: dict = None) -> dict | list:
-    """Make a GitHub API request."""
+    """Make a GitHub API request with retry on rate limit."""
     url = f"{GITHUB_API}{path}"
     if params:
         query = "&".join(f"{k}={v}" for k, v in params.items())
@@ -36,13 +36,29 @@ def gh_request(path: str, token: Optional[str] = None, params: dict = None) -> d
         headers["Authorization"] = f"token {token}"
 
     req = Request(url, headers=headers)
-    try:
-        with urlopen(req) as resp:
-            return json.loads(resp.read().decode("utf-8"))
-    except HTTPError as e:
-        if e.code == 403:
-            print("⚠️  Rate limited. Set GITHUB_TOKEN env var for higher limits.")
-        raise
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            with urlopen(req) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except HTTPError as e:
+            if e.code == 403:
+                # Check if rate limited
+                reset_time = e.headers.get("X-RateLimit-Reset")
+                remaining = e.headers.get("X-RateLimit-Remaining", "?")
+                if remaining == "0" and reset_time:
+                    import time as _time
+                    wait_seconds = max(int(reset_time) - int(_time.time()), 1)
+                    wait_seconds = min(wait_seconds, 300)  # cap at 5 min
+                    print(f"   ⏳ Rate limited, waiting {wait_seconds}s (attempt {attempt+1}/{max_retries})...")
+                    _time.sleep(wait_seconds)
+                    continue
+                if not token:
+                    print("⚠️  Rate limited. Set GITHUB_TOKEN env var for 5000 req/hr (vs 60 unauthenticated).")
+            if e.code == 404:
+                return []  # repo not found or private without auth
+            raise
+    raise Exception(f"GitHub API failed after {max_retries} retries: {path}")
 
 
 def collect_prs(username: str, repos: list, token: Optional[str], pr_limit: int) -> list:

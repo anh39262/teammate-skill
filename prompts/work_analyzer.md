@@ -204,3 +204,25 @@ Based on {name}'s role, focus on the relevant dimensions:
 - Dimensions with no information: mark `(Insufficient material — recommend adding relevant documents)`
 - Conclusions with source evidence: quote original text in quotation marks
 - Output will be used directly to generate work.md — must be specific and actionable, avoid "might", "tends to", "possibly"
+
+## Data Volume Tiers
+
+### Tier 1: Profile only (no source material)
+- Generate a plausible work skill skeleton from role + level + company
+- Use level-appropriate scope (L3 owns modules, L6 owns systems, L8 owns organizations)
+- Mark everything `(inferred from role)` — user should feed real data to make it accurate
+- **Still generate Tech Stack and Workflow sections** — even inferred ones are useful starting points
+
+### Tier 2: Light data (< 5 documents / < 20 PRs)
+- Extract what exists, fill structural gaps from role inference
+- Prioritize: CR comments > PR descriptions > design docs > chat messages
+
+### Tier 3: Rich data
+- Full extraction, evidence-based, direct quotes
+
+## Role Detection
+
+If the user didn't specify a role category, infer from:
+- Job title keywords: "engineer" → Backend/Frontend/ML, "PM" / "product" → Product Manager, "designer" → Designer, "data" → Data/Analytics, "SRE" / "devops" / "infra" → Platform
+- If still ambiguous, use Universal Extraction Dimensions only — don't guess wrong and generate irrelevant sections
+- **Non-tech roles** (sales, marketing, operations, finance, HR): use Universal dimensions only. Don't generate Tech Stack or Code Review sections — instead focus on Workflow, Output Style, and Knowledge Base

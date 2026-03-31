@@ -185,10 +185,28 @@ Run dual-track analysis on all collected materials:
 
 **Track B (Persona)**: Read `{baseDir}/prompts/persona_analyzer.md` for extraction dimensions. Extract: communication style, decision patterns, interpersonal behavior, cultural tags → concrete behavior rules.
 
-### Step 4: Generate and Preview
+### Step 4: Generate, Validate, and Preview
 
 Read `{baseDir}/prompts/work_builder.md` to generate Work Skill content.
 Read `{baseDir}/prompts/persona_builder.md` to generate Persona content (5-layer structure).
+
+**Quality Gate (mandatory — run before showing preview):**
+
+After generating, self-check against these criteria. Fix any failures before showing the preview:
+
+| Check | Pass Criteria | Auto-fix |
+|-------|---------------|----------|
+| **Layer 0 concreteness** | Every rule must be a "in X situation, they do Y" statement. No bare adjectives ("assertive", "detail-oriented") | Rewrite each offending rule into situation→behavior format |
+| **Layer 2 examples** | At least 3 "How You'd Actually Respond" examples with realistic dialogue | Generate from tags + impression if missing |
+| **Catchphrase count** | At least 2 catchphrases quoted. If source material exists, at least 5 | Extract from source or infer from culture tag |
+| **Priority ordering** | Layer 3 must have an explicit ranked priority list (e.g. "Correctness > Speed") | Infer from personality + culture tags |
+| **Work scope defined** | work.md must list at least 1 system/domain owned, even if inferred | Generate from role + level |
+| **No generic filler** | Scan for phrases: "they tend to", "generally speaking", "in most cases" | Replace with specific behavioral descriptions |
+| **Tag→Rule translation** | Every personality/culture tag from intake must appear as a concrete rule in Layer 0 | Add missing translations |
+
+If source material was skipped, lower the bar: Layer 2 examples and catchphrases can be tag-inferred, but must be marked `(inferred)`.
+
+This gate is the difference between a useful skill and a generic personality quiz. **Never skip it.**
 
 Show a concise preview card (not full content — just the highlights):
 ```
