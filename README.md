@@ -6,6 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://python.org)
+[![ClawHub](https://img.shields.io/badge/ClawHub-teammate--skill-ff6600)](https://clawhub.com/skills/teammate-skill)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blueviolet)](https://claude.ai/code)
 [![OpenClaw](https://img.shields.io/badge/🦞%20OpenClaw-Skill-orange)](https://github.com/openclaw/openclaw)
 [![AgentSkills](https://img.shields.io/badge/AgentSkills-Standard-green)](https://agentskills.io)
