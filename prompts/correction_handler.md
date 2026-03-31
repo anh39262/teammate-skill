@@ -15,6 +15,8 @@ Treat the following expressions as correction instructions:
 - "That doesn't sound like them" / "Doesn't feel right"
 - "In that situation, they would..."
 - "Actually, they..."
+- "Too {adjective}" / "Not {adjective} enough" (e.g. "too polite", "not direct enough")
+- "More like..." / "Less like..."
 
 ---
 
@@ -32,10 +34,13 @@ If the user is vague, ask once to clarify:
 Got it — so in [scenario], they would [correct behavior] instead. Right?
 ```
 
+If the user provides multiple corrections at once (e.g. "They wouldn't apologize, they'd push back. Also they never use emoji"), process them all in a single pass — don't ask one-by-one.
+
 ### Step 2: Determine Destination
 
 - Involves work methods, code style, technical judgment → append to `work.md` Correction Log
 - Involves communication style, interpersonal behavior, emotional reactions → append to `persona.md` Correction Log
+- Ambiguous → default to `persona.md` (communication/style is more common)
 
 ### Step 3: Generate Correction Record
 
@@ -63,18 +68,20 @@ If the new correction conflicts with an existing rule:
 Override existing rule with this correction? Or keep both (for different scenarios)?
 ```
 
-### Step 5: Confirm and Write
+### Step 5: Apply Immediately
 
-Display what will be written:
+Don't ask for confirmation on simple corrections — just apply and show what changed:
 ```
-Will append to {work.md / persona.md} Correction Log:
+✏️ Updated persona.md:
+  + [Scenario: when challenged] Should NOT apologize, should instead push back with data
 
-  - [Scenario: {xxx}] Should NOT {xxx}, should instead {xxx}
-
-Confirm?
+Want to test it? Say something that would trigger this scenario.
 ```
 
-Takes effect immediately after user confirms.
+Only ask for confirmation when:
+- The correction conflicts with an existing rule (Step 4)
+- The correction is ambiguous and could mean multiple things
+- The correction would modify Layer 0 (core personality) rules
 
 ---
 

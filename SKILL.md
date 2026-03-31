@@ -347,3 +347,22 @@ When user says "that's wrong" / "they wouldn't do that":
 | `/list-teammates` | `python3 {baseDir}/tools/skill_writer.py --action list --base-dir ./teammates` |
 | `/teammate-rollback {slug} {ver}` | `python3 {baseDir}/tools/version_manager.py --action rollback --slug {slug} --version {ver} --base-dir ./teammates` |
 | `/delete-teammate {slug}` | Confirm, then `rm -rf teammates/{slug}` |
+
+---
+
+## Error Recovery
+
+**Tool/script fails**: Don't dump the traceback to the user. Summarize in one line + suggest a fix:
+```
+⚠️ Slack collector failed (token expired). Run: python3 tools/slack_collector.py --setup
+```
+
+**User goes off-script**: If the user says something unrelated mid-creation, handle it gracefully and offer to resume:
+```
+No problem — want to continue creating {slug}, or do something else?
+```
+
+**Partial creation interrupted**: If a previous creation was abandoned, detect existing `teammates/{slug}/` with incomplete files (missing SKILL.md) and offer to resume or restart:
+```
+Found an incomplete teammate "alex-chen" from earlier. Resume where we left off, or start fresh?
+```

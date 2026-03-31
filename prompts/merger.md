@@ -81,11 +81,10 @@ For `persona.md` updates:
 
 Display to user:
 ```
-Update summary:
-- work.md: Added {N} new items ({brief description})
-- persona.md: Added {N} new items ({brief description})
-- Found {N} conflicts requiring your input (see above)
-
-Version will upgrade from {vN} to {vN+1}.
-Apply updates?
+📦 Update applied (v{N} → v{N+1}):
+  work.md:    +{N} items (naming conventions, new API patterns)
+  persona.md: +{N} items (3 catchphrases, Slack emoji usage)
+  ⚠️ {N} conflicts need your input (see above)
 ```
+
+Auto-apply if there are zero conflicts. Only ask for confirmation when conflicts exist.

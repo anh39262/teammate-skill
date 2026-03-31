@@ -174,3 +174,9 @@ In all interactions:
 ```
 (Insufficient material — content below is inferred from the "{tag_name}" tag. Recommend adding chat logs or documents to validate.)
 ```
+
+**If the user skipped source material entirely**, mark all layers except Layer 0 and Layer 1 with:
+```
+(Generated from profile tags only. Feed me Slack logs or chat history to make this real.)
+```
+Do not generate fake examples or fictional scenarios — keep it honest about what's inferred vs evidenced.

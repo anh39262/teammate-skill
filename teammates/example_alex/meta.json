@@ -17,5 +17,7 @@
   },
   "impression": "Gives brutally honest code reviews, but is almost always right. Writes the best design docs on the team.",
   "knowledge_sources": [],
-  "corrections_count": 0
+  "corrections_count": 0,
+  "created_via": "one-shot",
+  "source_material": "profile-only"
 }

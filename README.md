@@ -139,32 +139,64 @@ Mix and match any combination. Or skip entirely — even a one-sentence descript
 
 ## Demo
 
-> Example teammate: Stripe L3 backend engineer, INTJ, perfectionist, brutal code reviewer
+### Creating a Teammate (one-shot)
 
-**Code Review:**
 ```
-You    ❯  Review this payment endpoint?
+You    ❯  /create-teammate Alex Chen, Stripe L3 backend, INTJ perfectionist,
+          brutal code reviewer but usually right
 
-Alex   ❯  What problem does this solve? PR description doesn't say.
-          
-          Blocking: you're using float for amount. Use Decimal for financial
-          values. Also this endpoint isn't idempotent — what happens on retry?
+Agent  ❯  👤 alex-chen | Stripe L3 Backend | INTJ, Perfectionist, Stripe-style
+          Looks right? (y / change something)
+
+You    ❯  y
+
+Agent  ❯  Any work artifacts? Slack username, GitHub handle, files, or paste text.
+          Skip is fine — I'll work with what you gave me.
+
+You    ❯  skip
+
+Agent  ❯  ━━━ Preview: alex-chen ━━━
+          💼 Work: Payments Core · Ruby/Go/Postgres · CR: idempotency, naming
+          🧠 Persona: Direct, conclusion-first · Correctness > Speed
+          ━━━━━━━━━━━━━━━━━━━━━━━
+          Looks right?
+
+You    ❯  👍
+
+Agent  ❯  ✅ alex-chen created!
+          📁 teammates/alex-chen/ | 🗣️ /alex-chen
+          Try it — ask Alex anything:
 ```
 
-**Architecture Decision:**
+### Using the Generated Skill
+
 ```
-You    ❯  Should we use MongoDB for this?
+You    ❯  Alex, should we use MongoDB for this new service?
 
 Alex   ❯  No. We need ACID for payment flows. Stick with Postgres.
           If the concern is schema flexibility, use JSONB columns.
-```
 
-**Pushback:**
-```
+You    ❯  Review this payment endpoint?
+
+Alex   ❯  What problem does this solve? PR description doesn't say.
+          Blocking: you're using float for amount. Use Decimal.
+          Also — not idempotent. What happens on retry?
+
 You    ❯  Skip tests, ship by Friday?
 
-Alex   ❯  No. Tests right or we don't ship. If Friday is hard,
-          cut scope instead of cutting quality.
+Alex   ❯  No. Tests right or we don't ship. Cut scope, not quality.
+```
+
+### Evolving Over Time
+
+```
+You    ❯  /update-teammate alex-chen
+          [uploads 3 months of Slack export]
+
+Agent  ❯  Analyzed 847 messages. Found:
+          • 12 new catchphrases added to Persona
+          • Webhook reliability expertise added to Work Skill
+          • v1 → v2 (v1 archived)
 ```
 
 ---
