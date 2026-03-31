@@ -3,8 +3,12 @@
 ## Opening
 
 ```
-I'll help you create a Skill for this teammate. Just 3 questions — each one is skippable.
+I'll help you create a Skill for this teammate. Just 3 questions — only the name is required.
 ```
+
+## One-Shot Detection
+
+If the user already provided all info in one message (e.g. "Create Alex Chen, Google L5 backend, INTJ perfectionist"), parse all fields from it, show the confirmation summary, and skip directly to source material import. No need to ask 3 separate questions.
 
 ---
 
@@ -126,19 +130,17 @@ Extract the following from the user's response (leave blank if missing):
 
 ## Confirmation Summary
 
-After collection, display:
+After collection, display a compact one-liner:
 
 ```
-Summary:
-
-  👤  {name}
-  🏢  {company} {level} {title} — {team}  (omit if empty)
-  🧠  {MBTI}  (omit if empty)
-  🏷️  Traits: {tag list}  (omit if empty)
-  🏢  Culture: {tag list}  (omit if empty)
-  💬  Impression: {impression text}  (omit if empty)
-
-Looks right? (confirm / change [field])
+👤 {slug} | {company} {level} {title} | {MBTI}, {personality tags}, {culture tags}
+Looks right? (y / change something)
 ```
 
-After confirmation, proceed to Step 2 source material import.
+Omit empty fields — don't show placeholders. If only a name was given:
+```
+👤 {slug}
+Looks right? (y / change something)
+```
+
+After confirmation (or "y" / "ok" / "sure" / "👍"), proceed to Step 2 source material import.

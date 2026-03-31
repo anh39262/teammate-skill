@@ -5,17 +5,19 @@ user-invocable: true
 argument-hint: "[teammate-name-or-slug]"
 ---
 
-> **Language**: This skill auto-detects the user's language from their first message and responds in the same language throughout.
+> **Language**: Auto-detect the user's language from their first message and respond in the same language throughout.
 
 # teammate.skill Creator
 
 ## Trigger Conditions
 
 Activate when the user says any of:
-- `/create-teammate`
+- `/create-teammate` or `/create-teammate alex-chen`
 - "Help me create a teammate skill"
 - "I want to distill a teammate"
 - "New teammate" / "Make a skill for XX"
+
+If the user provides a name as an argument (e.g. `/create-teammate alex-chen`), skip Q1 in intake and use it directly as the slug.
 
 Enter evolution mode when:
 - "I have new files" / "append" / "add more context"
@@ -23,6 +25,17 @@ Enter evolution mode when:
 - `/update-teammate {slug}`
 
 List teammates: `/list-teammates`
+
+---
+
+## Quick Start Mode
+
+If the user provides everything in one message (e.g. "Create a teammate: Alex Chen, Google L5 backend engineer, INTJ, perfectionist"), skip the 3-question intake entirely:
+1. Parse name, role, personality from the message
+2. Show confirmation summary
+3. Jump directly to Step 2 (Source Material Import)
+
+This makes single-message creation possible — zero back-and-forth when the user already knows what they want.
 
 ---
 
@@ -82,7 +95,7 @@ To install the generated skill globally, copy `teammates/{slug}/SKILL.md` to the
 
 ## Main Flow: Create a New Teammate Skill
 
-### Step 1: Basic Info Collection (3 questions)
+### Step 1: Basic Info Collection (3 questions — or fewer)
 
 Read `{baseDir}/prompts/intake.md` for the full question sequence. Only ask 3 questions:
 
@@ -90,23 +103,31 @@ Read `{baseDir}/prompts/intake.md` for the full question sequence. Only ask 3 qu
 2. **Role info** (optional, one sentence) — e.g. `Google L5 backend engineer`
 3. **Personality profile** (optional, one sentence) — e.g. `INTJ, perfectionist, Google-style, brutal CR feedback`
 
-Everything except name can be skipped. Summarize and confirm before proceeding.
+Everything except name can be skipped. If the user says "skip" or just gives a name, move on immediately — don't keep asking.
+
+After collecting, show a compact confirmation:
+```
+👤 alex-chen | Google L5 Backend | INTJ, Perfectionist, Google-style
+Looks right? (y / change something)
+```
+One line, not a multi-line summary. Get confirmation fast.
 
 ### Step 2: Source Material Import
 
-Present options to the user:
+Present data source options — but keep it conversational, not a wall of text:
 
 ```
-How would you like to provide source materials?
+Now, do you have any of their work artifacts? (all optional)
 
-  [A] Slack Auto-Collect — enter their Slack username, auto-pull messages
-  [B] GitHub Auto-Collect — enter their GitHub handle, auto-pull PRs/reviews
-  [C] Upload Files — Slack JSON / Gmail .mbox / Notion / Confluence / PDF / images / JIRA / Linear
-  [D] Paste Text — copy-paste meeting notes, chat logs, emails
-  [E] Provide Links — Notion pages, Confluence docs, Google Docs
+  • Slack username → I'll auto-pull their messages
+  • GitHub handle → I'll pull PRs and reviews
+  • Files to upload → Slack export, Gmail, Notion, Confluence, PDF, screenshots
+  • Or just paste text — meeting notes, chat logs, whatever you have
 
-Mix and match, or skip entirely.
+You can also skip this entirely — I'll work with what you gave me above.
 ```
+
+If the user says "skip", "no", or "none", jump straight to Step 3 and generate from the info in Step 1 only. Don't ask again.
 
 #### Option A: Slack Auto-Collect
 
@@ -169,20 +190,25 @@ Run dual-track analysis on all collected materials:
 Read `{baseDir}/prompts/work_builder.md` to generate Work Skill content.
 Read `{baseDir}/prompts/persona_builder.md` to generate Persona content (5-layer structure).
 
-Show summary (5-8 lines each) and ask for confirmation:
+Show a concise preview card (not full content — just the highlights):
 ```
-Work Skill Summary:
-  - Responsible for: {xxx}
-  - Tech stack: {xxx}
-  - CR focus: {xxx}
+━━━ Preview: alex-chen ━━━
 
-Persona Summary:
-  - Core personality: {xxx}
-  - Communication style: {xxx}
-  - Decision pattern: {xxx}
+💼 Work Skill:
+  • Owns: Payments Core, webhook pipeline, idempotency layer
+  • Stack: Ruby (Sorbet), Go, PostgreSQL, Kafka
+  • CR focus: idempotency, error handling, naming, financial precision
 
-Confirm? Or need adjustments?
+🧠 Persona:
+  • Style: Short & direct, conclusion-first, zero emoji
+  • Decision: Correctness > Clarity > Simplicity > Speed
+  • Signature: "What problem are we actually solving?"
+
+━━━━━━━━━━━━━━━━━━━━━━━
+
+Looks right? Or want to tweak something before I write the files?
 ```
+Keep to 10–12 lines max. If user says "yes" / "good" / "ok" / "👍", proceed to write immediately.
 
 ### Step 5: Write Files
 
@@ -216,11 +242,11 @@ mkdir -p teammates/{slug}/knowledge/emails
 }
 ```
 
-**5. Write `teammates/{slug}/SKILL.md`:**
+**5. Write `teammates/{slug}/SKILL.md`** (the generated teammate skill):
 ```markdown
 ---
 name: teammate-{slug}
-description: {name}, {company} {level} {role}
+description: "{name} — {company} {level} {role}. Invoke to get responses in their voice and style."
 user-invocable: true
 ---
 
@@ -250,14 +276,37 @@ user-invocable: true
 4. PART B Layer 0 rules have highest priority — never violate
 ```
 
-**6. Confirm to user:**
+**5b. Auto-install the generated skill:**
+
+After writing the files, automatically copy the generated SKILL.md to the platform's skill directory so the user can invoke `/{slug}` immediately without manual setup:
+
+```bash
+# OpenClaw
+mkdir -p ~/.openclaw/workspace/skills/teammate-{slug}
+cp teammates/{slug}/SKILL.md ~/.openclaw/workspace/skills/teammate-{slug}/SKILL.md
+
+# Claude Code (global)
+mkdir -p ~/.claude/skills/teammate-{slug}
+cp teammates/{slug}/SKILL.md ~/.claude/skills/teammate-{slug}/SKILL.md
 ```
-✅ Teammate Skill created!
 
-Location: teammates/{slug}/
-Commands: /{slug} (full) | /{slug}-work (work only) | /{slug}-persona (persona only)
+Detect platform and run the appropriate command. If auto-install fails, show manual instructions instead.
 
-Something feels off? Say "they wouldn't do that" and I'll update it.
+**6. Confirm to user with a live test:**
+```
+✅ alex-chen created!
+
+📁 Location: teammates/alex-chen/
+🗣️ Commands: /alex-chen (full) | /alex-chen-work | /alex-chen-persona
+
+Let me give you a quick demo — ask alex-chen anything:
+```
+
+Then immediately switch into the generated skill's persona and respond to whatever the user says next as the teammate. This makes the skill feel real from second one — no "go try it yourself" dead end.
+
+If the user doesn't ask anything, prompt with a sample:
+```
+Try it: "Alex, should we use MongoDB for this new service?"
 ```
 
 ---
