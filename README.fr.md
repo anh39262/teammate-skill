@@ -7,11 +7,11 @@
 > *Votre collègue est parti. Son contexte n'avait pas à disparaître.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://python.org)
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](requirements.txt)
 [![ClawHub](https://img.shields.io/badge/ClawHub-teammate--skill-ff6600)](https://clawhub.com/skills/teammate-skill)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blueviolet)](https://claude.ai/code)
-[![OpenClaw](https://img.shields.io/badge/OpenClaw-Skill-orange)](https://openclaw.ai)
-[![AgentSkills](https://img.shields.io/badge/AgentSkills-Standard-green)](https://agentskills.io)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blueviolet)](INSTALL.md)
+[![OpenClaw](https://img.shields.io/badge/OpenClaw-Skill-orange)](https://github.com/openclaw/openclaw)
+[![AgentSkills](https://img.shields.io/badge/AgentSkills-Standard-green)](SKILL.md)
 
 <br>
 
@@ -58,10 +58,10 @@ et obtenez un **Skill IA qui fonctionne vraiment comme eux**<br>
 
 ## Plateformes
 
-### [Claude Code](https://claude.ai/code)
+### [Claude Code](INSTALL.md)
 Le CLI officiel d'Anthropic pour Claude. Installez ce Skill dans `.claude/skills/` et invoquez-le avec `/create-teammate`.
 
-### [OpenClaw](https://openclaw.ai) 🦞
+### [OpenClaw](https://github.com/openclaw/openclaw) 🦞
 Assistant IA personnel open-source par [@steipete](https://github.com/steipete). Fonctionne sur vos propres appareils, répond sur plus de 25 canaux (WhatsApp, Telegram, Slack, Discord, Teams, Signal, iMessage, et plus). Gateway local-first, mémoire persistante, voix, canvas, tâches planifiées, et un écosystème de Skills en pleine croissance. [GitHub](https://github.com/openclaw/openclaw)
 
 ### 🏆 [MyClaw.ai](https://myclaw.ai)
@@ -71,7 +71,7 @@ Hébergement managé pour OpenClaw — oubliez Docker, les serveurs et les confi
 
 ## Installation
 
-Ce Skill suit le standard ouvert [AgentSkills](https://agentskills.io) et fonctionne avec tout agent compatible.
+Ce Skill suit le standard ouvert [AgentSkills](SKILL.md) et fonctionne avec tout agent compatible.
 
 ### Claude Code
 
@@ -277,7 +277,7 @@ Les fichiers de connaissances brutes sont exclus par défaut — ajoutez `--incl
 
 ## Structure du projet
 
-Ce projet suit le standard ouvert [AgentSkills](https://agentskills.io) :
+Ce projet suit le standard ouvert [AgentSkills](SKILL.md) :
 
 ```
 create-teammate/

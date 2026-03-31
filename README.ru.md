@@ -7,11 +7,11 @@
 > *Ваш коллега ушёл. Его контекст мог бы остаться.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://python.org)
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](requirements.txt)
 [![ClawHub](https://img.shields.io/badge/ClawHub-teammate--skill-ff6600)](https://clawhub.com/skills/teammate-skill)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blueviolet)](https://claude.ai/code)
-[![OpenClaw](https://img.shields.io/badge/OpenClaw-Skill-orange)](https://openclaw.ai)
-[![AgentSkills](https://img.shields.io/badge/AgentSkills-Standard-green)](https://agentskills.io)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blueviolet)](INSTALL.md)
+[![OpenClaw](https://img.shields.io/badge/OpenClaw-Skill-orange)](https://github.com/openclaw/openclaw)
+[![AgentSkills](https://img.shields.io/badge/AgentSkills-Standard-green)](SKILL.md)
 
 <br>
 
@@ -58,10 +58,10 @@
 
 ## Платформы
 
-### [Claude Code](https://claude.ai/code)
+### [Claude Code](INSTALL.md)
 Официальный CLI от Anthropic для Claude. Установите этот Skill в `.claude/skills/` и вызывайте командой `/create-teammate`.
 
-### [OpenClaw](https://openclaw.ai) 🦞
+### [OpenClaw](https://github.com/openclaw/openclaw) 🦞
 Open-source персональный ИИ-ассистент от [@steipete](https://github.com/steipete). Работает на ваших собственных устройствах, отвечает через 25+ каналов (WhatsApp, Telegram, Slack, Discord, Teams, Signal, iMessage и другие). Local-first шлюз, постоянная память, голос, canvas, cron-задачи и растущая экосистема Skills. [GitHub](https://github.com/openclaw/openclaw)
 
 ### 🏆 [MyClaw.ai](https://myclaw.ai)
@@ -71,7 +71,7 @@ Open-source персональный ИИ-ассистент от [@steipete](ht
 
 ## Установка
 
-Этот Skill следует открытому стандарту [AgentSkills](https://agentskills.io) и работает с любым совместимым агентом.
+Этот Skill следует открытому стандарту [AgentSkills](SKILL.md) и работает с любым совместимым агентом.
 
 ### Claude Code
 
@@ -277,7 +277,7 @@ tar xzf alex-chen.teammate.tar.gz -C ./teammates/
 
 ## Структура проекта
 
-Проект следует открытому стандарту [AgentSkills](https://agentskills.io):
+Проект следует открытому стандарту [AgentSkills](SKILL.md):
 
 ```
 create-teammate/
