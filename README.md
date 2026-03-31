@@ -61,7 +61,7 @@ Anthropic's official CLI for Claude. Install this skill into `.claude/skills/` a
 ### [OpenClaw](https://openclaw.ai) 🦞
 Open-source personal AI assistant by [@steipete](https://github.com/steipete). Runs on your own devices, answers on 25+ channels (WhatsApp, Telegram, Slack, Discord, Teams, Signal, iMessage, and more). Local-first gateway, persistent memory, voice, canvas, cron jobs, and a growing skills ecosystem. [GitHub](https://github.com/openclaw/openclaw)
 
-### [MyClaw.ai](https://myclaw.ai)
+### 🏆 [MyClaw.ai](https://myclaw.ai)
 Managed hosting for OpenClaw — skip Docker, servers, and configs. One-click deploy, always-on, automatic updates, daily backups. Your OpenClaw instance live in minutes. Perfect if you want teammate.skill running 24/7 without self-hosting.
 
 ---
